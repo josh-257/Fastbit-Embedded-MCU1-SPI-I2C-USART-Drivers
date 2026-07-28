@@ -1,0 +1,8 @@
+Debug/
+Release/
+*.elf
+*.bin
+*.hex
+*.o
+*.su
+*.d
