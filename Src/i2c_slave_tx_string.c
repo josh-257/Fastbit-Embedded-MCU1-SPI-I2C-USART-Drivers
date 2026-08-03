@@ -2,18 +2,15 @@
 #include <stdio.h>
 #include <string.h>
 
-#define MY_ADDR 0x61
 #define SLAVE_ADDR 0x68
-#define CMD_SEND_LEN 0x51
-#define CMD_SEND_MSG 0x52
-
-//flag variable
-uint8_t rxComplt = RESET;
+#define MY_ADDR	SLAVE_ADDR
 
 void delay(void){
     // Course standard software delay for button debouncing
     for(uint32_t i = 0; i < 500000/2; i++);
 }
+
+
 
 /*********************************This is needed for using SWV printf**************************/
 // Manual Hardware mapping for ARM Cortex-M4 ITM Trace Registers
@@ -52,6 +49,8 @@ int _write(int file, char *ptr, int len) {
  */
 
 I2C_Handle_t I2C1Handle;
+
+uint8_t Tx_buf[] = "STM32 Slave mode testing..";
 
 void I2C1_GPIOInits(void){
 
@@ -102,8 +101,6 @@ void Button_Init(void){
 
 int main(void){
 
-	uint8_t commandcode, msg_len;
-	char buffer[50];
 
 	Button_Init();
 
@@ -115,43 +112,14 @@ int main(void){
 	I2C_IRQITConfig(IRQ_NO_I2C1_EV, ENABLE);
 	I2C_IRQITConfig(IRQ_NO_I2C1_ER, ENABLE);
 
+	I2C_SlaveEnableDisableCallbackEvents(I2C1, ENABLE);
+
 	I2C_PeripheralControl(I2C1, ENABLE);
 
 	I2C_Toggle_Acking(I2C1, I2C_ACK_ENABLE);
 
-	while(1){
-
-		//wait for button press
-		while(GPIO_ReadFromInputPin(GPIOA, GPIO_PIN_NO_0) == 0);
-
-		delay();
-
-		//First get the length of message from arduino
-		commandcode = CMD_SEND_LEN;
-
-		while(I2C_MasterSendDataIT(&I2C1Handle, &commandcode, 1, SLAVE_ADDR, I2C_SR_EN) != I2C_READY);
-
-		while(I2C_MasterReceiveDataIT(&I2C1Handle, &msg_len, 1, SLAVE_ADDR, I2C_SR_EN) != I2C_READY);
-		//Second receive message from arduino
-		commandcode = CMD_SEND_MSG;
-
-		while(I2C_MasterSendDataIT(&I2C1Handle, &commandcode, 1, SLAVE_ADDR, I2C_SR_EN) != I2C_READY);
-
-		while(I2C_MasterReceiveDataIT(&I2C1Handle, buffer, msg_len, SLAVE_ADDR, I2C_SR_DI) != I2C_READY);
-
-		rxComplt = RESET;
-
-		while(rxComplt != SET){
-
-		}
-
-		buffer[msg_len+1] = '\0';
-		printf("message: %s\n", buffer);
-		printf("printed\n");
-
-		rxComplt = RESET;
-
-	}
+	while(1);
+	return 0;
 }
 
 void I2C1_EV_IRQHandler(void){
@@ -166,30 +134,38 @@ void I2C1_ER_IRQHandler(void){
 
 void I2C_Application_Event_Callback(I2C_Handle_t *pI2CHandle, uint8_t AppEv){
 
-	if(AppEv == I2C_EV_TX_CMPLT){
+	static uint8_t cnt = 0;
+	static uint8_t commandCode = 0;
 
-		printf("Tx is completed\n");
+	if(AppEv == I2C_EV_DATA_REQ){
+
+		//Slave must send data
+		if(commandCode == 0x51){
+
+			//Send the length information to the master
+			I2C_SlaveSendData(pI2CHandle->pI2Cx, strlen((char*)Tx_buf));
+		}
+		else if(commandCode == 0x52){
+
+			//Send the contents of Tx_buf
+			I2C_SlaveSendData(pI2CHandle->pI2Cx, Tx_buf[cnt++]);
+		}
 	}
-	else if(AppEv == I2C_EV_RX_CMPLT){
+	else if(AppEv == I2C_EV_DATA_RCV){
 
-		printf("Rx is completed\n");
-		rxComplt = SET;
+		//Slave must receive data
+		commandCode = I2C_SlaveReceiveData(pI2CHandle->pI2Cx);
+
 	}
 	else if(AppEv == I2C_ERROR_AF){
 
-		//Slave has failed to send ack byte to master
-		printf("Error: Ack failure\n");
-
-		I2C_CloseSendData(pI2CHandle);
-
-		I2C_Generate_Stop_Condition(I2C1);
-
-		//Hang in infinite loop
-		while(1);
+		//Master sends nack so slave should stop transmitting
+		commandCode = 0xff;
+		cnt = 0;
 	}
-	else if(AppEv == I2C_EV_TX_CMPLT){
+	else if(AppEv == I2C_EV_STOP){
 
-		printf("Tx is completed\n");
+		//Masters has ended communication
 	}
 
 }

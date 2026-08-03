@@ -87,6 +87,8 @@ typedef struct{
 #define I2C_ERROR_AF    	5
 #define I2C_ERROR_OVR   	6
 #define I2C_ERROR_TIMEOUT 	7
+#define I2C_EV_DATA_REQ		8
+#define I2C_EV_DATA_RCV     9
 
 // Peripheral clock setup
 void I2C_PeriClockControl(I2C_RegDef_t *pI2Cx, uint8_t EnorDi);
@@ -111,16 +113,21 @@ void I2C_IRQPriorityConfig(uint8_t IRQ_Number, uint32_t IRQPriority);
 void I2C_EV_IRQHandling(I2C_Handle_t *pI2CHandle);
 void I2C_ER_IRQHandling(I2C_Handle_t *pI2CHandle);
 
+void I2C_SlaveSendData(I2C_RegDef_t *pI2C, uint8_t data);
+uint8_t I2C_SlaveReceiveData(I2C_RegDef_t *pI2C);
+
 
 //enable I2C peripheral
 void I2C_PeripheralControl(I2C_RegDef_t *pI2Cx, uint8_t EnOrDi);
 uint8_t I2C_Get_Flag_Status(I2C_RegDef_t *pI2Cx, uint32_t FlagName);
-
-//Enable or disable ack
 void I2C_Toggle_Acking(I2C_RegDef_t *pI2Cx, uint8_t EnorDi);
+void I2C_SlaveEnableDisableCallbackEvents(I2C_RegDef_t *pI2Cx, uint8_t EnorDi);
 
 
-uint32_t RCC_GetPCLKValue(void);
+
+
+void I2C_Generate_Stop_Condition(I2C_RegDef_t *pI2Cx);
+void I2C_GenerateStartCondition(I2C_RegDef_t *pI2Cx);
 
 //application callback
 __weak void I2C_Application_Event_Callback(I2C_Handle_t *pI2CHandle, uint8_t AppEv);

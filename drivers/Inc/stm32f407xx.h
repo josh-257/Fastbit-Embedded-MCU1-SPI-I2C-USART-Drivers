@@ -177,8 +177,17 @@ typedef struct {
 	volatile uint32_t CCR;          // Clock control register                               Address Offset: 0x1C
 	volatile uint32_t TRISE;        // TRISE register                                       Address Offset: 0x20
 	volatile uint32_t FLTR;         // FLTR register                                        Address Offset: 0x24
-} I2C_RegDef_t;
+}I2C_RegDef_t;
 
+typedef struct {
+	volatile uint32_t SR;			// Status Register                                      Address Offset: 0x00
+	volatile uint32_t DR;			// Data Register                                        Address Offset: 0x04
+	volatile uint32_t BRR;			// Baud Rate Register                                   Address Offset: 0x08
+	volatile uint32_t CR1;			// Control Register 1                                   Address Offset: 0x0C
+	volatile uint32_t CR2;			// Control Register 2                                   Address Offset: 0x10
+	volatile uint32_t CR3;			// Control Register 3                                   Address Offset: 0x14
+	volatile uint32_t GTPR;			// Guard Time and Prescaler Register                    Address Offset: 0x18
+} USART_RegDef_t;
 
 //Peripheral definitions
 #define GPIOA 						((GPIO_RegDef_t*)GPIOA_BASE_ADDR)
@@ -204,6 +213,13 @@ typedef struct {
 #define I2C1						((I2C_RegDef_t*)I2C1_BASE_ADDR)
 #define I2C2						((I2C_RegDef_t*)I2C2_BASE_ADDR)
 #define I2C3						((I2C_RegDef_t*)I2C3_BASE_ADDR)
+
+#define USART1						((USART_RegDef_t*)USART1_BASE_ADDR)
+#define USART2						((USART_RegDef_t*)USART2_BASE_ADDR)
+#define USART3						((USART_RegDef_t*)USART3_BASE_ADDR)
+#define UART4						((USART_RegDef_t*)UART4_BASE_ADDR)
+#define UART5						((USART_RegDef_t*)UART5_BASE_ADDR)
+#define USART6						((USART_RegDef_t*)USART6_BASE_ADDR)
 
 //Clock enable macros for GPIOx peripherals
 #define GPIOA_PCLK_EN()				(RCC->AHB1ENR |= (1 << 0))
@@ -290,6 +306,15 @@ typedef struct {
 #define I2C1_REG_RESET()			do{(RCC->APB1RSTR |= (1 << 21)); (RCC->APB1RSTR &= ~(1 << 21));} while(0)
 #define I2C2_REG_RESET()			do{(RCC->APB1RSTR |= (1 << 22)); (RCC->APB1RSTR &= ~(1 << 22));} while(0)
 #define I2C3_REG_RESET()			do{(RCC->APB1RSTR |= (1 << 23)); (RCC->APB1RSTR &= ~(1 << 23));} while(0)
+
+//Macros to reset USARTx peripherals
+#define USART1_REG_RESET()			do{(RCC->APB2RSTR |= (1 << 4)); (RCC->APB2RSTR &= ~(1 << 4));} while(0)
+#define USART2_REG_RESET()			do{(RCC->APB1RSTR |= (1 << 17)); (RCC->APB1RSTR &= ~(1 << 17));} while(0)
+#define USART3_REG_RESET()			do{(RCC->APB1RSTR |= (1 << 18)); (RCC->APB1RSTR &= ~(1 << 18));} while(0)
+#define UART4_REG_RESET()			do{(RCC->APB1RSTR |= (1 << 18)); (RCC->APB1RSTR &= ~(1 << 19));} while(0)
+#define UART5_REG_RESET()			do{(RCC->APB1RSTR |= (1 << 18)); (RCC->APB1RSTR &= ~(1 << 20));} while(0)
+#define USART6_REG_RESET()			do{(RCC->APB2RSTR |= (1 << 5)); (RCC->APB2RSTR &= ~(1 << 5));} while(0)
+
 
 //Returns port code for given GPIOx base address
 #define GPIO_BASE_ADDR_TO_CODE(x)	(x == GPIOA) ? 0 :\
@@ -435,8 +460,74 @@ typedef struct {
 #define I2C_CCR_DUTY                14  // Fast mode duty cycle
 #define I2C_CCR_FS                  15  // I2C master mode selection (Standard / Fast)
 
+// Bit position definitions of USART peripheral
+//USART_SR bits
+#define USART_SR_PE					0   // Parity Error
+#define USART_SR_FE					1   // Framing Error
+#define USART_SR_NE					2   // Noise Error Flag
+#define USART_SR_ORE				3   // Overrun Error
+#define USART_SR_IDLE				4   // IDLE Line Detected
+#define USART_SR_RXNE				5   // Read Data Register Not Empty
+#define USART_SR_TC					6   // Transmission Complete
+#define USART_SR_TXE				7   // Transmit Data Register Empty
+#define USART_SR_LBD				8   // LIN Break Detection Flag
+#define USART_SR_CTS				9   // CTS Change Flag
+
+// 3. Baud Rate Register (USART_BRR) bits
+#define USART_BRR_DIV_FRACTION		0   // Fraction of USARTDIV offset (Bits 0:3)
+#define USART_BRR_DIV_MANTISSA		4   // Mantissa of USARTDIV offset (Bits 4:15)
+
+// 4. Control Register 1 (USART_CR1) bits
+#define USART_CR1_SBK				0   // Send Break
+#define USART_CR1_RWU				1   // Receiver Wakeup
+#define USART_CR1_RE				2   // Receiver Enable
+#define USART_CR1_TE				3   // Transmitter Enable
+#define USART_CR1_IDLEIE			4   // IDLE Interrupt Enable
+#define USART_CR1_RXNEIE			5   // RXNE Interrupt Enable
+#define USART_CR1_TCIE				6   // Transmission Complete Interrupt Enable
+#define USART_CR1_TXEIE				7   // TXE Interrupt Enable
+#define USART_CR1_PEIE				8   // PE Interrupt Enable
+#define USART_CR1_PS				9   // Parity Selection
+#define USART_CR1_PCE				10  // Parity Control Enable
+#define USART_CR1_WAKE				11  // Wakeup Method
+#define USART_CR1_M					12  // Word Length
+#define USART_CR1_UE				13  // USART Enable
+#define USART_CR1_OVER8				15  // Oversampling Mode
+
+// 5. Control Register 2 (USART_CR2) bits
+#define USART_CR2_ADD				0   // Address of the USART node offset (Bits 0:3)
+#define USART_CR2_LBDL				5   // LIN Break Detection Length
+#define USART_CR2_LBDIE				6   // LIN Break Detection Interrupt Enable
+#define USART_CR2_LBCL				8   // Last Bit Clock Pulse
+#define USART_CR2_CPHA				9   // Clock Phase
+#define USART_CR2_CPOL				10  // Clock Polarity
+#define USART_CR2_CLKEN				11  // Clock Enable
+#define USART_CR2_STOP				12  // STOP bits offset (Bits 12:13)
+#define USART_CR2_LINEN				14  // LIN Mode Enable
+
+// 6. Control Register 3 (USART_CR3) bits
+#define USART_CR3_EIE				0   // Error Interrupt Enable
+#define USART_CR3_IREN				1   // IrDA Mode Enable
+#define USART_CR3_IRLP				2   // IrDA Low-Power
+#define USART_CR3_HDSEL				3   // Half-Duplex Selection
+#define USART_CR3_NACK				4   // Smartcard NACK Enable
+#define USART_CR3_SCEN				5   // Smartcard Mode Enable
+#define USART_CR3_DMAR				6   // DMA Enable Receiver
+#define USART_CR3_DMAT				7   // DMA Enable Transmitter
+#define USART_CR3_RTSE				8   // Request to Send Enable
+#define USART_CR3_CTSE				9   // Clear to Send Enable
+#define USART_CR3_CTSIE				10  // CTS Interrupt Enable
+#define USART_CR3_ONEBIT			11  // One-Bit Sampling Method
+
+// 7. Guard Time and Prescaler Register (USART_GTPR) bits
+#define USART_GTPR_PSC				0   // Prescaler Value offset (Bits 0:7)
+#define USART_GTPR_GT				8   // Guard Time Value offset (Bits 8:15)
+
+
 #include "stm32f407xx_gpio_driver.h"
 #include "stm32f407xx_SPI_driver.h"
 #include "stm32f407xx_i2c_driver.h"
+#include "stm32f407xx_USART_driver.h"
+#include "stm32f407xx_rcc_driver.h"
 
 #endif /* INC_STM32F407XX_H_ */

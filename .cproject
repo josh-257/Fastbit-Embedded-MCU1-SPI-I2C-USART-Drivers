@@ -71,12 +71,12 @@
 							<tool id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.objcopy.symbolsrec.2139783635" name="MCU Output Converter Motorola S-rec with symbols" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.objcopy.symbolsrec"/>
 						</toolChain>
 					</folderInfo>
-					<fileInfo id="com.st.stm32cube.ide.mcu.gnu.managedbuild.config.exe.debug.1467518953.2078761089" name="i2c_rx_arduino.c" rcbsApplicability="disable" resourcePath="Src/i2c_rx_arduino.c" toolsToInvoke="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.1893222553.1390005774">
-						<tool id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.1893222553.1390005774" name="MCU/MPU GCC Compiler" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.1893222553"/>
+					<fileInfo id="com.st.stm32cube.ide.mcu.gnu.managedbuild.config.exe.debug.1467518953.1026856342" name="i2c_slave_tx_string.c" rcbsApplicability="disable" resourcePath="Src/i2c_slave_tx_string.c" toolsToInvoke="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.1893222553.691920200">
+						<tool id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.1893222553.691920200" name="MCU/MPU GCC Compiler" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.1893222553"/>
 					</fileInfo>
 					<sourceEntries>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Inc"/>
-						<entry excluding="i2c_rx_arduino.c|i2c_tx_only_arduino.c|spi_msg_receive.c|spi_cmd_handling.c|working_arduino_spi_slave.c|SPI_tx_only_arduino.c|spi_arduino_tes.c|SPI_tx_testing.c|led_button.c|button_interrupt.c|led_toggle.c|main.c|Inc" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Src"/>
+						<entry excluding="i2c_slave_tx_string.c|i2c_rx_arduino_IT.c|i2c_rx_arduino.c|i2c_tx_only_arduino.c|spi_msg_receive.c|spi_cmd_handling.c|working_arduino_spi_slave.c|SPI_tx_only_arduino.c|spi_arduino_tes.c|SPI_tx_testing.c|led_button.c|button_interrupt.c|led_toggle.c|main.c|Inc" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Src"/>
 						<entry excluding="Inc" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Startup"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="drivers"/>
 					</sourceEntries>
