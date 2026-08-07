@@ -1,13 +1,7 @@
-<<<<<<< HEAD
+# Build directories
 Debug/
 Release/
-*.elf
-*.bin
-*.hex
-*.o
-*.su
-*.d
-=======
+
 # Prerequisites
 *.d
 
@@ -39,6 +33,7 @@ Release/
 *.dylib
 
 # Executables
+*.bin
 *.exe
 *.out
 *.app
@@ -63,4 +58,3 @@ dkms.conf
 
 # debug information files
 *.dwo
->>>>>>> 5f9402de5169f027b31bced9a4b231b245bf0e78
