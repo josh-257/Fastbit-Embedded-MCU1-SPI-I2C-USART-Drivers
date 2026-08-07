@@ -665,7 +665,7 @@ void I2C_EV_IRQHandling(I2C_Handle_t *pI2CHandle){
 
 		if(pI2CHandle->pI2Cx->SR2 & (1 << I2C_SR2_MSL)){
 
-			//TXE flag is set
+			//Master
 			//We have to do the data transmission
 			if(pI2CHandle->TxRxState == I2C_BUSY_IN_TX){
 

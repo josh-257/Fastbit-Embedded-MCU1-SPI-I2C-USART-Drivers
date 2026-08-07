@@ -101,11 +101,20 @@ typedef struct
 #define USART_HW_FLOW_CTRL_CTS_RTS	3
 
 /*
- * TxRx Busy states
+ * Application states
  */
 #define USART_READY			0
 #define USART_BUSY_IN_TX 	1
 #define USART_BUSY_IN_RX	2
+
+#define USART_EVENT_TX_CMPLT 0
+#define USART_EVENT_RX_CMPLT 1
+#define USART_EVENT_IDLE     2
+#define USART_EVENT_CTS      3
+#define USART_EVENT_PE       4
+#define USART_ERR_FE     	 5
+#define USART_ERR_NE    	 6
+#define USART_ERR_ORE    	 7
 
 /******************************************************************************************
  *								APIs supported by this driver
@@ -122,7 +131,6 @@ void USART_PeriClockControl(USART_RegDef_t *pUSARTx, uint8_t EnorDi);
 void USART_Init(USART_Handle_t *pUSARTHandle);
 void USART_DeInit(USART_RegDef_t *pUSARTx);
 
-
 /*
  * Data Send and Receive
  */
@@ -136,7 +144,7 @@ uint8_t USART_ReceiveDataIT(USART_Handle_t *pUSARTHandle, uint8_t *pRxBuffer, ui
  */
 void USART_IRQInterruptConfig(uint8_t IRQNumber, uint8_t EnorDi);
 void USART_IRQPriorityConfig(uint8_t IRQNumber, uint32_t IRQPriority);
-void USART_IRQHandling(USART_Handle_t *pHandle);
+void USART_IRQ_Handling(USART_Handle_t *pHandle);
 
 /*
  * Other Peripheral Control APIs
@@ -145,11 +153,11 @@ void USART_PeripheralControl(USART_RegDef_t *pUSARTx, uint8_t EnOrDi);
 uint8_t USART_GetFlagStatus(USART_RegDef_t *pUSARTx, uint8_t StatusFlagName);
 void USART_ClearFlag(USART_RegDef_t *pUSARTx, uint16_t StatusFlagName);
 void USART_SetBaudRate(USART_RegDef_t *pUSARTx, uint32_t BaudRate);
+void USART_ClearOVRRunFlag(USART_RegDef_t *pUSART);
 
 /*
  * Application callback
  */
 void USART_ApplicationEventCallback(USART_Handle_t *pUSARTHandle,uint8_t AppEv);
-
 
 #endif /* INC_STM32F407XX_USART_DRIVER_H_ */

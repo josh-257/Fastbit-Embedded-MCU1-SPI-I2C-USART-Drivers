@@ -485,7 +485,7 @@ uint8_t USART_SendDataIT(USART_Handle_t *pUSARTHandle,uint8_t *pTxBuffer, uint32
  * @Note              - Resolve all the TODOs
 
  */
-uint8_t USART_ReceiveDataIT(USART_Handle_t *pUSARTHandle,uint8_t *pRxBuffer, uint32_t Len)
+uint8_t USART_ReceiveDataIT(USART_Handle_t *pUSARTHandle, uint8_t *pRxBuffer, uint32_t Len)
 {
 	uint8_t rxstate = pUSARTHandle->RxBusyState;
 
@@ -555,9 +555,215 @@ void USART_IRQInterruptConfig(uint8_t IRQ_Number, uint8_t EnorDi){
 		}
 }
 
+void USART_IRQ_Handling(USART_Handle_t *pHandle){
 
-void USART_IRQPriorityConfig(uint8_t IRQ_Number, uint32_t IRQPriority){
+	uint8_t temp1, temp2;
+	uint16_t *pdata;
 
+	//Check for TXE interrupt
+	temp1 = pHandle->pUSARTx->CR1 & (1 << USART_CR1_TXEIE);
+	temp2 = pHandle->pUSARTx->SR & (1 << USART_SR_TXE);
+
+	if(temp1 && temp2){
+
+
+		if(pHandle->TxBusyState == USART_BUSY_IN_TX){
+
+			if(pHandle->TxLen > 0){
+
+				//Check if 9 bit word or 8 bit
+				if(pHandle->USART_Config.USART_WordLength == USART_WORDLEN_9BITS){
+
+					pdata = (uint16_t*)pHandle->pTxBuffer;
+					pHandle->pUSARTx->DR = (*pdata & (uint16_t)0x01FF);
+
+					//Check for parity control
+					if(pHandle->USART_Config.USART_ParityControl == USART_PARITY_DISABLE){
+
+						pHandle->pTxBuffer++;
+						pHandle->pTxBuffer++;
+						pHandle->TxLen-=2;
+					}
+					else{
+
+						pHandle->pTxBuffer++;
+						pHandle->TxLen-=1;
+					}
+				}
+				else{
+
+					pHandle->pUSARTx->DR = (*pHandle->pTxBuffer  & (uint8_t)0xFF);
+
+					pHandle->pTxBuffer++;
+					pHandle->TxLen-=1;
+				}
+
+			}
+			if(pHandle->TxLen == 0){
+
+				//Disable TXE interrupt
+				pHandle->pUSARTx->CR1 &= ~(1 << USART_CR1_TXEIE);
+			}
+		}
+	}
+
+
+	//Check for Transmission complete interrupt
+	temp1 = pHandle->pUSARTx->CR1 & (1 << USART_CR1_TCIE);
+	temp2 = pHandle->pUSARTx->SR & (1 << USART_SR_TC);
+
+	if(temp1 && temp2){
+
+		if(pHandle->TxBusyState == USART_BUSY_IN_TX){
+
+			if(pHandle->TxLen == 0){
+
+				//Close transmission
+				pHandle->pUSARTx->SR &= (1 << USART_SR_TC);
+				pHandle->pUSARTx->CR1 &= (1 << USART_CR1_TCIE);
+
+				pHandle->TxBusyState = USART_READY;
+
+				pHandle->pTxBuffer = NULL;
+				pHandle->TxLen = 0;
+
+				//Notify application
+				USART_ApplicationEventCallback(pHandle,USART_EVENT_TX_CMPLT);
+			}
+		}
+	}
+
+	//Check for RXNE interrupt
+	temp1 = pHandle->pUSARTx->CR1 & (1 << USART_CR1_RXNEIE);
+	temp2 = pHandle->pUSARTx->SR & (1 << USART_SR_RXNE);
+
+	if(temp1 && temp2)
+	{
+
+		if(pHandle->RxBusyState == USART_BUSY_IN_RX)
+		{
+			if(pHandle->RxLen > 0)
+			{
+
+				if(pHandle->USART_Config.USART_WordLength == USART_WORDLEN_9BITS)
+				{
+
+					if(pHandle->USART_Config.USART_ParityControl == USART_PARITY_DISABLE)
+					{
+						//No parity is used , so all 9bits will be of user data
+
+						//read only first 9 bits so mask the DR with 0x01FF
+						*((uint16_t*) pHandle->pRxBuffer) = (pHandle->pUSARTx->DR  & (uint16_t)0x01FF);
+
+						//Now increment the pRxBuffer two times
+						pHandle->pRxBuffer++;
+						pHandle->pRxBuffer++;
+						pHandle->RxLen -= 2;
+					}
+					else
+					{
+						//Parity is used, so 8bits will be of user data and 1 bit is parity
+						 *pHandle->pRxBuffer = (pHandle->pUSARTx->DR  & (uint8_t)0xFF);
+						 pHandle->pRxBuffer++;
+						 pHandle->RxLen--;
+					}
+				}
+				else
+				{
+					if(pHandle->USART_Config.USART_ParityControl == USART_PARITY_DISABLE)
+					{
+						//Parity not used 8 bits of data available
+						*pHandle->pRxBuffer = (uint8_t) (pHandle->pUSARTx->DR  & (uint8_t)0xFF);
+					}
+					else
+					{
+						//Parity used so 7 bits of data available
+						*pHandle->pRxBuffer = (uint8_t) (pHandle->pUSARTx->DR  & (uint8_t)0x7F);
+					}
+
+					pHandle->pRxBuffer++;
+					pHandle->RxLen--;
+
+				}
+			}
+			if(pHandle->RxLen == 0)
+			{
+				//Close transmission and notify application
+				pHandle->pUSARTx->CR1 &= ~( 1 << USART_CR1_RXNEIE );
+				pHandle->RxBusyState = USART_READY;
+				USART_ApplicationEventCallback(pHandle,USART_EVENT_RX_CMPLT);
+			}
+		}
+	}
+
+	//Check for Idle detection interrupt
+	temp1 = pHandle->pUSARTx->SR & ( 1 << USART_SR_IDLE);
+	temp2 = pHandle->pUSARTx->CR1 & ( 1 << USART_CR1_IDLEIE);
+
+
+	if(temp1 && temp2)
+	{
+		//Clear the IDLE flag
+		(void)pHandle->pUSARTx->DR;
+		USART_ApplicationEventCallback(pHandle,USART_EVENT_IDLE);
+	}
+
+	//Check for overrun interrupt
+	temp1 = pHandle->pUSARTx->SR & ( 1 << USART_SR_ORE);
+	temp2 = pHandle->pUSARTx->CR1 & ( 1 << USART_CR1_RXNEIE);
+
+	if(temp1 && temp2)
+	{
+		USART_ClearOVRRunFlag(pHandle->pUSARTx);
+		USART_ApplicationEventCallback(pHandle,USART_ERR_ORE);
+	}
+
+	//Check for Error interrupt
+	//Noise Flag, Overrun error and Framing Error in multibuffer communication
+	//We dont discuss multibuffer communication in this course. please refer to the RM
+	//The blow code will get executed in only if multibuffer mode is used.
+
+	temp2 =  pHandle->pUSARTx->CR3 & ( 1 << USART_CR3_EIE) ;
+
+	if(temp2 )
+	{
+		temp1 = pHandle->pUSARTx->SR;
+		if(temp1 & ( 1 << USART_SR_FE))
+		{
+			/*
+				This bit is set by hardware when a de-synchronization, excessive noise or a break character
+				is detected. It is cleared by a software sequence (an read to the USART_SR register
+				followed by a read to the USART_DR register).
+			*/
+			USART_ApplicationEventCallback(pHandle,USART_ERR_FE);
+		}
+
+		if(temp1 & ( 1 << USART_SR_NE) )
+		{
+			/*
+				This bit is set by hardware when noise is detected on a received frame. It is cleared by a
+				software sequence (an read to the USART_SR register followed by a read to the
+				USART_DR register).
+			*/
+			USART_ApplicationEventCallback(pHandle,USART_ERR_NE);
+		}
+
+		if(temp1 & ( 1 << USART_SR_ORE) )
+		{
+			USART_ApplicationEventCallback(pHandle,USART_ERR_ORE);
+		}
+	}
+
+}
+
+void USART_ClearOVRRunFlag(USART_RegDef_t *pUSART)
+{
+	(void)pUSART->SR;
+	(void)pUSART->DR;
+}
+
+void USART_IRQPriorityConfig(uint8_t IRQ_Number, uint32_t IRQPriority)
+{
 	//1. first lets find out the ipr register
 	uint8_t iprx = IRQ_Number / 4;
 	uint8_t iprx_section  = IRQ_Number % 4;
@@ -567,4 +773,7 @@ void USART_IRQPriorityConfig(uint8_t IRQ_Number, uint32_t IRQPriority){
 	*(NVIC_PR_BASE_ADDR + iprx) |=  (IRQPriority << shift_amount);
 }
 
-//void USART_ApplicationEventCallback(USART_Handle_t *pUSARTHandle,uint8_t AppEv);
+__weak void USART_ApplicationEventCallback(USART_Handle_t *pUSARTHandle,uint8_t event)
+{
+
+}
