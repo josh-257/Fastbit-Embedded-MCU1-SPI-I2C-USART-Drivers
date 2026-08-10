@@ -8,7 +8,7 @@
 
 static void write_4_bits(uint8_t value);
 static void lcd_enable(void);
-static void udelay(uint8_t cnt);
+static void udelay(uint32_t cnt);
 
 
 void lcd_send_command(uint8_t cmd)
@@ -30,7 +30,7 @@ void lcd_init(void)
 	lcd_signal.GPIO_PinConfig.GPIO_PinMode = GPIO_MODE_OUT;
 	lcd_signal.GPIO_PinConfig.GPIO_PinNumber = LCD_GPIO_RS;
 	lcd_signal.GPIO_PinConfig.GPIO_PinOPType = GPIO_OP_TYPE_PP;
-	lcd_signal.GPIO_PinConfig.GPIO_PinPuPdControl = GPIO_NOPUPD;
+	lcd_signal.GPIO_PinConfig.GPIO_PinPuPdControl = GPIO_PIN_NOPUPD;
 	lcd_signal.GPIO_PinConfig.GPIO_PinSpeed = GPIO_SPEED_HIGH;
 	GPIO_Init(&lcd_signal);
 
@@ -76,7 +76,7 @@ void lcd_init(void)
 	write_4_bits(0x3);
 	write_4_bits(0x2);
 
-	//Function set command
+	//4 bit data mode, using both lines, with standard font
 	lcd_send_command(LCD_CMD_4DL_2N_5X8F);
 
 	//display ON cursor ON
@@ -92,7 +92,6 @@ void lcd_init(void)
 
 
 //This function sends a character to the LCD using 4bit parallel data transmission
-//
 void lcd_send_char(uint8_t data)
 {
 	GPIO_WriteToOutputPin(LCD_GPIO_PORT, LCD_GPIO_RS, GPIO_PIN_SET);
@@ -163,12 +162,12 @@ void lcd_set_cursor(uint8_t row, uint8_t column)
   }
 }
 
-void mdelay(uint8_t cnt)
+void mdelay(uint32_t cnt)
 {
 	for(int i = 0; i < (cnt * 1000); i++);
 }
 
-static void udelay(uint8_t cnt)
+static void udelay(uint32_t cnt)
 {
 	for(int i = 0; i < cnt; i++);
 }

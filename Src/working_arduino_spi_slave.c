@@ -35,7 +35,7 @@ void SPI2_GPIO_Inits(void){
 	SPIPins.GPIO_PinConfig.GPIO_PinMode = GPIO_MODE_ALTFN;
 	SPIPins.GPIO_PinConfig.GPIO_AltFunMode = 5;
 	SPIPins.GPIO_PinConfig.GPIO_PinOPType = GPIO_OP_TYPE_PP;
-	SPIPins.GPIO_PinConfig.GPIO_PinPuPdControl = GPIO_NOPUPD;
+	SPIPins.GPIO_PinConfig.GPIO_PinPuPdControl = GPIO_PIN_NOPUPD;
 	SPIPins.GPIO_PinConfig.GPIO_PinSpeed = GPIO_SPEED_HIGH;
 
 	//SCLK
@@ -87,7 +87,7 @@ int main (void){
 	GPIO_btn.pGPIOx = GPIOA;
 	GPIO_btn.GPIO_PinConfig.GPIO_PinNumber = GPIO_PIN_NO_0;
 	GPIO_btn.GPIO_PinConfig.GPIO_PinMode = GPIO_MODE_IN;
-	GPIO_btn.GPIO_PinConfig.GPIO_PinPuPdControl = GPIO_NOPUPD;
+	GPIO_btn.GPIO_PinConfig.GPIO_PinPuPdControl = GPIO_PIN_NOPUPD;
 	GPIO_Init(&GPIO_btn);
 
 	//Initialise Pins
@@ -116,8 +116,8 @@ int main (void){
 		//send data
 		SPI_Send(SPI2, (uint8_t*)user_data, strlen(user_data));
 		//check finished transmission before disabling
-		//while(!SPI_Get_Flag_Status(SPI2, SPI_SR_TXE));
-		while(SPI_Get_Flag_Status(SPI2, SPI_SR_BSY));
+		//while(!SPI_GetFlagStatus(SPI2, SPI_SR_TXE));
+		while(SPI_GetFlagStatus(SPI2, SPI_SR_BSY));
 		//for(volatile uint32_t i = 0; i < 200; i++);
 		while(GPIO_ReadFromInputPin(GPIOA, GPIO_PIN_NO_0));
 		//stop transmission

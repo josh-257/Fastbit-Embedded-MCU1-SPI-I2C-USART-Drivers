@@ -26,7 +26,7 @@ int main(void)
 	GPIO_btn.GPIO_PinConfig.GPIO_PinNumber = GPIO_PIN_NO_5;
 	GPIO_btn.GPIO_PinConfig.GPIO_PinMode = GPIO_MODE_IN;
 	GPIO_btn.GPIO_PinConfig.GPIO_PinPuPdControl = GPIO_PIN_PU;
-	GPIO_PeriClockControl(GPIOB, ENABLE);
+	GPIO_PeripheralClockControl(GPIOB, ENABLE);
 	GPIO_Init(&GPIO_btn);
 
 	// 2. Configure PB13 and PB15 as simple OUTPUTS instead of SPI
@@ -34,7 +34,7 @@ int main(void)
 	TestPins.pGPIOx = GPIOB;
 	TestPins.GPIO_PinConfig.GPIO_PinMode = GPIO_MODE_OUT;        // Simple Output Mode
 	TestPins.GPIO_PinConfig.GPIO_PinOPType = GPIO_OP_TYPE_PP;
-	TestPins.GPIO_PinConfig.GPIO_PinPuPdControl = GPIO_NOPUPD;
+	TestPins.GPIO_PinConfig.GPIO_PinPuPdControl = GPIO_PIN_NOPUPD;
 
 	TestPins.GPIO_PinConfig.GPIO_PinNumber = GPIO_PIN_NO_13;     // SCLK line
 	GPIO_Init(&TestPins);

@@ -12,14 +12,15 @@
 #define SYSTICK_TIM_CLK 16000000UL
 
 #define PRINT_LCD
-#define DEBUG
+//#define DEBUG_WITH_SWV
+
 
 void init_systick_timer(uint32_t tick_hz)
 {
 	uint32_t *pSRVR = (uint32_t*)0xE000E014;
 	uint32_t *pSCSR = (uint32_t*)0xE000E010;
 
-    /* calculation of reload value */
+    //calculation of reload value
     uint32_t count_value = (SYSTICK_TIM_CLK/tick_hz)-1;
 
     //Clear the value of SVR
@@ -37,8 +38,8 @@ void init_systick_timer(uint32_t tick_hz)
 
 }
 
-#ifndef DEBUG
-/*********************************This is needed for using SWV printf**************************/
+#ifdef DEBUG_WITH_SWV
+/*********************************Needed for using SWV printf**********************************/
 // Manual Hardware mapping for ARM Cortex-M4 ITM Trace Registers
 #define DEMCR                   *((volatile uint32_t*) 0xE000EDFCU )
 #define ITM_STIMULUS_PORT0      *((volatile uint32_t*) 0xE0000000U )
@@ -99,7 +100,7 @@ int main(void)
 
 	init_systick_timer(1);
 
-	current_date.day = THURSDAY;
+	current_date.day = DS1307_THURSDAY;
 	current_date.date = 6;
 	current_date.month = 8;
 	current_date.year = 26;

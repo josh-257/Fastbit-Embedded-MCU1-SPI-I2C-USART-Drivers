@@ -33,13 +33,13 @@
 
 #define DS1307_I2C_ADDRESS     	0x68
 
-#define SUNDAY			1
-#define MONDAY			2
-#define TUESDAY			3
-#define WEDNESDAY		4
-#define THURSDAY		5
-#define FRIDAY			6
-#define SATURDAY		7
+#define DS1307_SUNDAY			1
+#define DS1307_MONDAY			2
+#define DS1307_TUESDAY			3
+#define DS1307_WEDNESDAY		4
+#define DS1307_THURSDAY			5
+#define DS1307_FRIDAY			6
+#define DS1307_SATURDAY			7
 
 //Struct to handle date information
 typedef struct
@@ -59,13 +59,40 @@ typedef struct
 	uint8_t time_format;
 }RTC_time_t;
 
-//Function prototypes
+/***************************************************************************
+ * @brief	Initialises I2C comms between MCU and RTC before setting halt
+ * 			bit to 0 ensuring RTC is running.
+ * @retval  Returns 0 if initialisation and communication succeeded, or
+ *          a non-zero status if communication failed.
+ * @note 	I2C SDA and SCL pins can be chosen by modifying the application
+ * 			configurable macros in this header file.
+ */
 uint8_t ds1307_init(void);
 
-void ds1307_set_current_time(RTC_time_t *);
-void ds1307_get_current_time(RTC_time_t *);
+/***************************************************************************
+ * @brief	Configures RTC registers matching the time given by user.
+ * @param 	*rtc_time: Pointer to struct containing time information.
+ */
+void ds1307_set_current_time(RTC_time_t *rtc_time);
 
-void ds1307_set_current_date(RTC_date_t *);
-void ds1307_get_current_date(RTC_date_t *);
+/***************************************************************************
+ * @brief	Retrieves time data from RTC and stores this data inside
+ * 			RTC_time_t struct provided.
+ * @param 	*rtc_time: Pointer to struct that will store the time data.
+ */
+void ds1307_get_current_time(RTC_time_t *rtc_time);
+
+/***************************************************************************
+ * @brief	Configures RTC registers matching the date given by user.
+ * @param 	*rtc_date: Pointer to struct containing date information.
+ */
+void ds1307_set_current_date(RTC_date_t *rtc_date);
+
+/***************************************************************************
+ * @brief	Retrieves date information from RTC and stores this data inside
+ * 			RTC_date_t struct provided.
+ * @param 	*rtc_date: Pointer to struct that will store the date data.
+ */
+void ds1307_get_current_date(RTC_date_t *rtc_date);
 
 #endif /* DS1307_H_ */

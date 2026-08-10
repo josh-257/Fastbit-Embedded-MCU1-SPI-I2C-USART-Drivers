@@ -13,38 +13,33 @@
 
 #define __weak __attribute__((weak))
 
-/*****************************START: Processor Specific details***************************/
+/************************Processor Specific Details (ARM Cortex Mx Processor)*************/
 
-//ARM Cortex Mx Processor NVIC ISERx register Addresses
-
+//Interrupt Set-Enable Registers
 #define NVIC_ISER0					((volatile uint32_t*)0xE000E100)
 #define NVIC_ISER1					((volatile uint32_t*)0xE000E104)
 #define NVIC_ISER2					((volatile uint32_t*)0xE000E108)
 #define NVIC_ISER3					((volatile uint32_t*)0xE000E10C)
 
 
-//ARM Cortex Mx Processor NVIC ICERx register Addresses
-
+//Interrupt Clear-Enable Registers
 #define NVIC_ICER0					((volatile uint32_t*)0xE000E180)
 #define NVIC_ICER1					((volatile uint32_t*)0xE000E184)
 #define NVIC_ICER2					((volatile uint32_t*)0xE000E188)
 #define NVIC_ICER3					((volatile uint32_t*)0xE000E18C)
 
-//ARM Cortex Mx Processor Priority Register Address calculation
-
 #define NVIC_PR_BASE_ADDR			((volatile uint32_t*)0xE000E400)
 
-//ARM Cortex Mx Processor Number of Priority bits implemented in Priority register
-
+//Number of Priority bits implemented in priority register (STM32F407 has 16 priority levels)
 #define NO_PR_BITS_IMPLEMENTED		4
 
-/********************************START: MCU Specific details************************/
+/********************************MCU Specific details(STM32F407)************************/
 
 //Base addresses of Flash and SRAM memory
-#define FLASH_BASE_ADDRESS			0x08000000U //start of flash memory
+#define FLASH_BASE_ADDRESS			0x08000000U
 #define SRAM1_BASE_ADDRESS			0x20000000U
 #define SRAM2_BASE_ADDRESS			0x2001C000U
-#define ROM_BASE_ADDR				0x1FFF0000U //start of ROM
+#define ROM_BASE_ADDR				0x1FFF0000U
 #define SRAM 						SRAM1_BASE_ADDRESS
 
 #define PERIPH_BASE					0x40000000U
@@ -53,8 +48,7 @@
 #define AHB1_PERIPH_BASE			0x40020000U
 #define AHB2_PERIPH_BASE			0x50000000U
 
-//Base addresses of peripherals on AHB1 bus
-
+//Base addresses of peripherals on AHB1
 #define GPIOA_BASE_ADDR				(AHB1_PERIPH_BASE + 0x0000)
 #define GPIOB_BASE_ADDR				(AHB1_PERIPH_BASE + 0x0400)
 #define GPIOC_BASE_ADDR				(AHB1_PERIPH_BASE + 0x0800)
@@ -67,7 +61,6 @@
 #define RCC_BASE_ADDR				(AHB1_PERIPH_BASE + 0x3800)
 
 //Base addresses of peripherals on APB1
-
 #define I2C1_BASE_ADDR				(APB1_PERIPH_BASE + 0x5400)
 #define I2C2_BASE_ADDR				(APB1_PERIPH_BASE + 0x5800)
 #define I2C3_BASE_ADDR				(APB1_PERIPH_BASE + 0x5C00)
@@ -81,7 +74,6 @@
 #define UART5_BASE_ADDR				(APB1_PERIPH_BASE + 0x5000)
 
 //Base addresses of peripherals on APB2
-
 #define EXTI_BASE_ADDR				(APB2_PERIPH_BASE + 0x3C00)
 #define SPI1_BASE_ADDR				(APB2_PERIPH_BASE + 0x3000)
 #define SPI4_BASE_ADDR				(APB2_PERIPH_BASE + 0x3400)
@@ -91,8 +83,7 @@
 #define USART1_BASE_ADDR			(APB2_PERIPH_BASE + 0x1000)
 #define USART6_BASE_ADDR			(APB2_PERIPH_BASE + 0x1400)
 
-/**********************Peripheral register definition structures*****************************************************/
-
+/****************************Peripheral register definition structures*****************************************************/
 typedef struct {
 	volatile uint32_t MODER; 		// GPIO mode register				                    Address offset:0x00
 	volatile uint32_t OTYPER; 		// Output type register				                    Address offset:0x04

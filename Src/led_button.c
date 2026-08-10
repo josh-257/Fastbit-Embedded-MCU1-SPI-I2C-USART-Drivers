@@ -27,8 +27,8 @@ int main(void)
 	GPIO_led.GPIO_PinConfig.GPIO_PinNumber = GPIO_PIN_NO_12;
 	GPIO_led.GPIO_PinConfig.GPIO_PinMode = GPIO_MODE_OUT;
 	GPIO_led.GPIO_PinConfig.GPIO_PinOPType = GPIO_OP_TYPE_PP;
-	GPIO_led.GPIO_PinConfig.GPIO_PinPuPdControl = GPIO_NOPUPD;
-	GPIO_PeriClockControl(GPIOD, ENABLE);
+	GPIO_led.GPIO_PinConfig.GPIO_PinPuPdControl = GPIO_PIN_NOPUPD;
+	GPIO_PeripheralClockControl(GPIOD, ENABLE);
 	GPIO_Init(&GPIO_led);
 
 	//button
@@ -36,7 +36,7 @@ int main(void)
 	GPIO_btn.GPIO_PinConfig.GPIO_PinNumber = GPIO_PIN_NO_5;
 	GPIO_btn.GPIO_PinConfig.GPIO_PinMode = GPIO_MODE_IN;
 	GPIO_btn.GPIO_PinConfig.GPIO_PinPuPdControl = GPIO_PIN_PU;
-	GPIO_PeriClockControl(GPIOB, ENABLE);
+	GPIO_PeripheralClockControl(GPIOB, ENABLE);
 	GPIO_Init(&GPIO_btn);
 	for(;;){
 		if(GPIO_ReadFromInputPin(GPIOB, 5) == LOW){

@@ -21,7 +21,7 @@ void SPI2_GPIO_Inits(void){
 	SPIPins.GPIO_PinConfig.GPIO_PinMode = GPIO_MODE_ALTFN;
 	SPIPins.GPIO_PinConfig.GPIO_AltFunMode = 5;
 	SPIPins.GPIO_PinConfig.GPIO_PinOPType = GPIO_OP_TYPE_PP;
-	SPIPins.GPIO_PinConfig.GPIO_PinPuPdControl = GPIO_NOPUPD;
+	SPIPins.GPIO_PinConfig.GPIO_PinPuPdControl = GPIO_PIN_NOPUPD;
 	SPIPins.GPIO_PinConfig.GPIO_PinSpeed = GPIO_SPEED_HIGH;
 
 	//SCLK
@@ -72,8 +72,8 @@ int main (void){
 	//enable the SPI2 peripheral
 	SPI_PeripheralControl(SPI2, ENABLE);
 	SPI_Send(SPI2, (uint8_t*)user_data, strlen(user_data));
-	while(!SPI_Get_Flag_Status(SPI2, SPI_SR_TXE));
-	while(SPI_Get_Flag_Status(SPI2, SPI_SR_BSY));
+	while(!SPI_GetFlagStatus(SPI2, SPI_SR_TXE));
+	while(SPI_GetFlagStatus(SPI2, SPI_SR_BSY));
 	//SPI_PeripheralControl(SPI2, DISABLE);
 	while(1);
 	return 0;

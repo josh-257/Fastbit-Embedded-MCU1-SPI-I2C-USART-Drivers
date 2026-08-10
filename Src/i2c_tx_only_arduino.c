@@ -69,7 +69,7 @@ void Button_Init(void){
     GPIO_btn.GPIO_PinConfig.GPIO_PinNumber = GPIO_PIN_NO_0;
     GPIO_btn.GPIO_PinConfig.GPIO_PinMode = GPIO_MODE_IN;
     GPIO_btn.GPIO_PinConfig.GPIO_PinSpeed = GPIO_SPEED_HIGH;
-    GPIO_btn.GPIO_PinConfig.GPIO_PinPuPdControl = GPIO_NOPUPD;
+    GPIO_btn.GPIO_PinConfig.GPIO_PinPuPdControl = GPIO_PIN_NOPUPD;
 
     GPIO_Init(&GPIO_btn);
 
@@ -78,9 +78,9 @@ void Button_Init(void){
 	GpioLed.GPIO_PinConfig.GPIO_PinMode = GPIO_MODE_OUT;
 	GpioLed.GPIO_PinConfig.GPIO_PinSpeed = GPIO_SPEED_HIGH;
 	GpioLed.GPIO_PinConfig.GPIO_PinOPType = GPIO_OP_TYPE_PP;
-	GpioLed.GPIO_PinConfig.GPIO_PinPuPdControl = GPIO_NOPUPD;
+	GpioLed.GPIO_PinConfig.GPIO_PinPuPdControl = GPIO_PIN_NOPUPD;
 
-	GPIO_PeriClockControl(GPIOD,ENABLE);
+	GPIO_PeripheralClockControl(GPIOD,ENABLE);
 
 	GPIO_Init(&GpioLed);
 }

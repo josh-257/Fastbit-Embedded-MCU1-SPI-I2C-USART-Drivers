@@ -7,20 +7,7 @@
 #include "stm32f407xx.h"
 #include "stm32f407xx_USART_driver.h"
 
-/*********************************************************************
- * @fn      		  - USART_SetBaudRate
- *
- * @brief             -
- *
- * @param[in]         -
- * @param[in]         -
- * @param[in]         -
- *
- * @return            -
- *
- * @Note              -  Resolve all the TODOs
 
- */
 void USART_SetBaudRate(USART_RegDef_t *pUSARTx, uint32_t BaudRate)
 {
 
@@ -38,10 +25,10 @@ void USART_SetBaudRate(USART_RegDef_t *pUSARTx, uint32_t BaudRate)
   if(pUSARTx == USART1 || pUSARTx == USART6)
   {
 	   //USART1 and USART6 are hanging on APB2 bus
-	   PCLKx = RCC_GetPCLK2Value();
+	   PCLKx = RCC_GetPeripheralClockAPB2Value();
   }else
   {
-	   PCLKx = RCC_GetPCLK1Value();
+	   PCLKx = RCC_GetPeripheralClockAPB1Value();
   }
 
   //Check for OVER8 configuration bit
@@ -84,20 +71,6 @@ void USART_SetBaudRate(USART_RegDef_t *pUSARTx, uint32_t BaudRate)
   pUSARTx->BRR = tempreg;
 }
 
-/*********************************************************************
- * @fn      		  - USART_Init
- *
- * @brief             -
- *
- * @param[in]         -
- * @param[in]         -
- * @param[in]         -
- *
- * @return            -
- *
- * @Note              - Resolve all the TODOs
-
- */
 void USART_Init(USART_Handle_t *pUSARTHandle)
 {
 
@@ -107,19 +80,20 @@ void USART_Init(USART_Handle_t *pUSARTHandle)
 /******************************** Configuration of CR1 ******************************************/
 
 	//Implement the code to enable the Clock for given USART peripheral
-	 USART_PeriClockControl(pUSARTHandle->pUSARTx, ENABLE);
+	 USART_PeripheralClockControl(pUSARTHandle->pUSARTx, ENABLE);
 
 	//Enable USART Tx and Rx engines according to the USART_Mode configuration item
 	if ( pUSARTHandle->USART_Config.USART_Mode == USART_MODE_ONLY_RX)
 	{
 		//Implement the code to enable the Receiver bit field
 		tempreg|= (1 << USART_CR1_RE);
-	}else if (pUSARTHandle->USART_Config.USART_Mode == USART_MODE_ONLY_TX)
+	}
+	else if (pUSARTHandle->USART_Config.USART_Mode == USART_MODE_ONLY_TX)
 	{
 		//Implement the code to enable the Transmitter bit field
 		tempreg |= ( 1 << USART_CR1_TE );
-
-	}else if (pUSARTHandle->USART_Config.USART_Mode == USART_MODE_TXRX)
+	}
+	else if (pUSARTHandle->USART_Config.USART_Mode == USART_MODE_TXRX)
 	{
 		//Implement the code to enable the both Transmitter and Receiver bit fields
 		tempreg |= ( ( 1 << USART_CR1_TE) | ( 1 << USART_CR1_RE) );
@@ -137,15 +111,14 @@ void USART_Init(USART_Handle_t *pUSARTHandle)
 
 		//Implement the code to enable EVEN parity
 		//Not required because by default EVEN parity will be selected once you enable the parity control
-
-	}else if (pUSARTHandle->USART_Config.USART_ParityControl == USART_PARITY_EN_ODD )
+	}
+	else if (pUSARTHandle->USART_Config.USART_ParityControl == USART_PARITY_EN_ODD )
 	{
 		//Implement the code to enable the parity control
 	    tempreg |= ( 1 << USART_CR1_PCE);
 
 	    //Implement the code to enable ODD parity
 	    tempreg |= ( 1 << USART_CR1_PS);
-
 	}
 
    //Program the CR1 register
@@ -170,14 +143,13 @@ void USART_Init(USART_Handle_t *pUSARTHandle)
 	{
 		//Implement the code to enable CTS flow control
 		tempreg |= ( 1 << USART_CR3_CTSE);
-
-
-	}else if (pUSARTHandle->USART_Config.USART_HWFlowControl == USART_HW_FLOW_CTRL_RTS)
+	}
+	else if (pUSARTHandle->USART_Config.USART_HWFlowControl == USART_HW_FLOW_CTRL_RTS)
 	{
 		//Implement the code to enable RTS flow control
 		tempreg |= (1 << USART_CR3_RTSE);
-
-	}else if (pUSARTHandle->USART_Config.USART_HWFlowControl == USART_HW_FLOW_CTRL_CTS_RTS)
+	}
+	else if (pUSARTHandle->USART_Config.USART_HWFlowControl == USART_HW_FLOW_CTRL_CTS_RTS)
 	{
 		//Implement the code to enable both CTS and RTS Flow control
 		tempreg |= (1 << USART_CR3_RTSE);
@@ -195,7 +167,7 @@ void USART_Init(USART_Handle_t *pUSARTHandle)
 }
 
 
-void USART_PeriClockControl(USART_RegDef_t *pUSARTx, uint8_t EnorDi){
+void USART_PeripheralClockControl(USART_RegDef_t *pUSARTx, uint8_t EnorDi){
 
 	 if(EnorDi == ENABLE)
 	    {
@@ -290,23 +262,6 @@ void USART_DeInit(USART_RegDef_t *pUSARTx){
 		}
 }
 
-
-
-
-/*********************************************************************
- * @fn      		  - USART_SendData
- *
- * @brief             -
- *
- * @param[in]         -
- * @param[in]         -
- * @param[in]         -
- *
- * @return            -
- *
- * @Note              - Resolve all the TODOs
-
- */
 void USART_SendData(USART_Handle_t *pUSARTHandle, uint8_t *pTxBuffer, uint32_t Len)
 {
 
@@ -352,22 +307,6 @@ void USART_SendData(USART_Handle_t *pUSARTHandle, uint8_t *pTxBuffer, uint32_t L
 	//Implement the code to wait till TC flag is set in the SR
 	while( ! USART_GetFlagStatus(pUSARTHandle->pUSARTx,USART_SR_TC));
 }
-
-
-/*********************************************************************
- * @fn      		  - USART_ReceiveData
- *
- * @brief             -
- *
- * @param[in]         -
- * @param[in]         -
- * @param[in]         -
- *
- * @return            -
- *
- * @Note              -
-
- */
 
 void USART_ReceiveData(USART_Handle_t *pUSARTHandle, uint8_t *pRxBuffer, uint32_t Len)
 {
@@ -432,20 +371,6 @@ void USART_ReceiveData(USART_Handle_t *pUSARTHandle, uint8_t *pRxBuffer, uint32_
 
 }
 
-/*********************************************************************
- * @fn      		  - USART_SendDataWithIT
- *
- * @brief             -
- *
- * @param[in]         -
- * @param[in]         -
- * @param[in]         -
- *
- * @return            -
- *
- * @Note              - Resolve all the TODOs
-
- */
 uint8_t USART_SendDataIT(USART_Handle_t *pUSARTHandle,uint8_t *pTxBuffer, uint32_t Len)
 {
 	uint8_t txstate = pUSARTHandle->TxBusyState;
@@ -470,21 +395,6 @@ uint8_t USART_SendDataIT(USART_Handle_t *pUSARTHandle,uint8_t *pTxBuffer, uint32
 
 }
 
-
-/*********************************************************************
- * @fn      		  - USART_ReceiveDataIT
- *
- * @brief             -
- *
- * @param[in]         -
- * @param[in]         -
- * @param[in]         -
- *
- * @return            -
- *
- * @Note              - Resolve all the TODOs
-
- */
 uint8_t USART_ReceiveDataIT(USART_Handle_t *pUSARTHandle, uint8_t *pRxBuffer, uint32_t Len)
 {
 	uint8_t rxstate = pUSARTHandle->RxBusyState;
@@ -506,53 +416,51 @@ uint8_t USART_ReceiveDataIT(USART_Handle_t *pUSARTHandle, uint8_t *pRxBuffer, ui
 
 }
 
+uint8_t USART_GetFlagStatus(USART_RegDef_t *pUSARTx, uint8_t StatusFlagName)
+{
+	if(pUSARTx->SR & StatusFlagName){
+		return FLAG_SET;
+	}
 
-
-//void USART_IRQHandling(USART_Handle_t *pHandle);
-
-uint8_t USART_GetFlagStatus(USART_RegDef_t *pUSARTx, uint8_t StatusFlagName){
-
-	if(pUSARTx->SR & (1 << StatusFlagName)){
-			return FLAG_SET;
-		}
-		return FLAG_RESET;
+	return FLAG_RESET;
 }
 
-void USART_ClearFlag(USART_RegDef_t *pUSARTx, uint16_t StatusFlagName){
-
-	pUSARTx->SR &= ~(1 << StatusFlagName);
+void USART_ClearFlag(USART_RegDef_t *pUSARTx, uint16_t StatusFlagName)
+{
+	pUSARTx->SR &= ~(StatusFlagName);
 }
 
-void USART_IRQInterruptConfig(uint8_t IRQ_Number, uint8_t EnorDi){
+void USART_IRQInterruptConfig(uint8_t IRQ_Number, uint8_t EnorDi)
+{
 
 	if(EnorDi == ENABLE){
-			if(IRQ_Number <= 31){
-				//program ISER0 register
-				*NVIC_ISER0 |= (1 << IRQ_Number);
-			}
-			else if(IRQ_Number > 31 && IRQ_Number < 64){
-				//program ISER1 register
-				*NVIC_ISER1 |= (1 << IRQ_Number % 32);
-			}
-			else if(IRQ_Number > 64 && IRQ_Number < 96){
-				//program ISER2 register
-				*NVIC_ISER2 |= (1 << IRQ_Number % 32);
-			}
+		if(IRQ_Number <= 31){
+			//program ISER0 register
+			*NVIC_ISER0 |= (1 << IRQ_Number);
 		}
-		else{
-			if(IRQ_Number <= 31){
-				//program ICER0 register
-				*NVIC_ICER0 |= (1 << IRQ_Number);
-			}
-			else if(IRQ_Number > 31 && IRQ_Number < 64){
-				//program ICER1 register
-				*NVIC_ICER1 |= (1 << IRQ_Number % 32);
-			}
-			else if(IRQ_Number > 64 && IRQ_Number < 96){
-				//program ICER2 register
-				*NVIC_ICER2 |= (1 << IRQ_Number % 32);
-			}
+		else if(IRQ_Number > 31 && IRQ_Number < 64){
+			//program ISER1 register
+			*NVIC_ISER1 |= (1 << IRQ_Number % 32);
 		}
+		else if(IRQ_Number > 64 && IRQ_Number < 96){
+			//program ISER2 register
+			*NVIC_ISER2 |= (1 << IRQ_Number % 32);
+		}
+	}
+	else{
+		if(IRQ_Number <= 31){
+			//program ICER0 register
+			*NVIC_ICER0 |= (1 << IRQ_Number);
+		}
+		else if(IRQ_Number > 31 && IRQ_Number < 64){
+			//program ICER1 register
+			*NVIC_ICER1 |= (1 << IRQ_Number % 32);
+		}
+		else if(IRQ_Number > 64 && IRQ_Number < 96){
+			//program ICER2 register
+			*NVIC_ICER2 |= (1 << IRQ_Number % 32);
+		}
+	}
 }
 
 void USART_IRQ_Handling(USART_Handle_t *pHandle){
@@ -614,13 +522,13 @@ void USART_IRQ_Handling(USART_Handle_t *pHandle){
 
 	if(temp1 && temp2){
 
-		if(pHandle->TxBusyState == USART_BUSY_IN_TX){
-
-			if(pHandle->TxLen == 0){
-
+		if(pHandle->TxBusyState == USART_BUSY_IN_TX)
+		{
+			if(pHandle->TxLen == 0)
+			{
 				//Close transmission
-				pHandle->pUSARTx->SR &= (1 << USART_SR_TC);
-				pHandle->pUSARTx->CR1 &= (1 << USART_CR1_TCIE);
+				pHandle->pUSARTx->SR &= ~(1 << USART_SR_TC);
+				pHandle->pUSARTx->CR1 &= ~(1 << USART_CR1_TCIE);
 
 				pHandle->TxBusyState = USART_READY;
 
@@ -639,7 +547,6 @@ void USART_IRQ_Handling(USART_Handle_t *pHandle){
 
 	if(temp1 && temp2)
 	{
-
 		if(pHandle->RxBusyState == USART_BUSY_IN_RX)
 		{
 			if(pHandle->RxLen > 0)
@@ -721,7 +628,7 @@ void USART_IRQ_Handling(USART_Handle_t *pHandle){
 	//Check for Error interrupt
 	//Noise Flag, Overrun error and Framing Error in multibuffer communication
 	//We dont discuss multibuffer communication in this course. please refer to the RM
-	//The blow code will get executed in only if multibuffer mode is used.
+	//The below code will get executed only if multibuffer mode is used.
 
 	temp2 =  pHandle->pUSARTx->CR3 & ( 1 << USART_CR3_EIE) ;
 
@@ -732,7 +639,7 @@ void USART_IRQ_Handling(USART_Handle_t *pHandle){
 		{
 			/*
 				This bit is set by hardware when a de-synchronization, excessive noise or a break character
-				is detected. It is cleared by a software sequence (an read to the USART_SR register
+				is detected. It is cleared by a software sequence (a read to the USART_SR register
 				followed by a read to the USART_DR register).
 			*/
 			USART_ApplicationEventCallback(pHandle,USART_ERR_FE);

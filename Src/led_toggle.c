@@ -16,7 +16,7 @@ int main(void)
 	GPIO_led.GPIO_PinConfig.GPIO_PinMode = GPIO_MODE_OUT;
 	GPIO_led.GPIO_PinConfig.GPIO_PinOPType = GPIO_OP_TYPE_OD;
 	GPIO_led.GPIO_PinConfig.GPIO_PinPuPdControl = GPIO_PIN_PU;
-	GPIO_PeriClockControl(GPIOD, ENABLE);
+	GPIO_PeripheralClockControl(GPIOD, ENABLE);
 	GPIO_Init(&GPIO_led);
 	for(;;){
 		GPIO_ToggleOutputPin(GPIOD, 12);

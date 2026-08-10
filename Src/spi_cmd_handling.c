@@ -48,7 +48,7 @@ void SPI2_GPIOInits(void){
     SPIPins.GPIO_PinConfig.GPIO_PinMode = GPIO_MODE_ALTFN;
     SPIPins.GPIO_PinConfig.GPIO_AltFunMode = 5;
     SPIPins.GPIO_PinConfig.GPIO_PinOPType = GPIO_OP_TYPE_PP;
-    SPIPins.GPIO_PinConfig.GPIO_PinPuPdControl = GPIO_NOPUPD;
+    SPIPins.GPIO_PinConfig.GPIO_PinPuPdControl = GPIO_PIN_NOPUPD;
     SPIPins.GPIO_PinConfig.GPIO_PinSpeed = GPIO_SPEED_HIGH;
 
     // SCLK
@@ -96,7 +96,7 @@ void Button_Init(void){
     GPIO_btn.GPIO_PinConfig.GPIO_PinNumber = GPIO_PIN_NO_0;
     GPIO_btn.GPIO_PinConfig.GPIO_PinMode = GPIO_MODE_IN;
     GPIO_btn.GPIO_PinConfig.GPIO_PinSpeed = GPIO_SPEED_HIGH;
-    GPIO_btn.GPIO_PinConfig.GPIO_PinPuPdControl = GPIO_NOPUPD;
+    GPIO_btn.GPIO_PinConfig.GPIO_PinPuPdControl = GPIO_PIN_NOPUPD;
 
     GPIO_Init(&GPIO_btn);
 
@@ -105,9 +105,9 @@ void Button_Init(void){
 	GpioLed.GPIO_PinConfig.GPIO_PinMode = GPIO_MODE_OUT;
 	GpioLed.GPIO_PinConfig.GPIO_PinSpeed = GPIO_SPEED_HIGH;
 	GpioLed.GPIO_PinConfig.GPIO_PinOPType = GPIO_OP_TYPE_PP;
-	GpioLed.GPIO_PinConfig.GPIO_PinPuPdControl = GPIO_NOPUPD;
+	GpioLed.GPIO_PinConfig.GPIO_PinPuPdControl = GPIO_PIN_NOPUPD;
 
-	GPIO_PeriClockControl(GPIOD,ENABLE);
+	GPIO_PeripheralClockControl(GPIOD,ENABLE);
 
 	GPIO_Init(&GpioLed);
 }
@@ -361,7 +361,7 @@ int main(void){
 		}
 
 		//lets confirm SPI is not busy
-		while(SPI_Get_Flag_Status(SPI2, SPI_SR_BSY) == FLAG_SET);
+		while(SPI_GetFlagStatus(SPI2, SPI_SR_BSY) == FLAG_SET);
 
         // Disable the SPI2 peripheral (Hardware pulls NSS line HIGH instantly)
         SPI_PeripheralControl(SPI2, DISABLE);
